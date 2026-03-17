@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--color-bg: 244 247 252;
+	--color-surface: 255 255 255;
+	--color-surface-elevated: 255 255 255;
+	--color-border: 209 221 242;
+	--color-brand: 74 108 247;
+	--color-text-strong: 18 29 53;
+	--color-text-muted: 91 108 147;
+	--color-warning: 186 74 0;
+
+	font-family:
+		'Inter',
+		'Segoe UI',
+		system-ui,
+		-apple-system,
+		sans-serif;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	background: rgb(var(--color-bg));
+	color: rgb(var(--color-text-strong));
+}
