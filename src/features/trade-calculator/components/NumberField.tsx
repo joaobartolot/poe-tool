@@ -1,12 +1,20 @@
-import type { ChangeEventHandler } from 'react';
+import type { ChangeEventHandler, KeyboardEventHandler } from 'react';
 
 type NumberFieldProps = {
 	id: string;
 	label: string;
 	value: string;
 	onChange: ChangeEventHandler<HTMLInputElement>;
-	helpText?: string;
 	placeholder?: string;
+	onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
+	enterKeyHint?:
+		| 'done'
+		| 'enter'
+		| 'go'
+		| 'next'
+		| 'previous'
+		| 'search'
+		| 'send';
 };
 
 export const NumberField = ({
@@ -14,8 +22,9 @@ export const NumberField = ({
 	label,
 	value,
 	onChange,
-	helpText,
 	placeholder,
+	onKeyDown,
+	enterKeyHint,
 }: NumberFieldProps) => {
 	return (
 		<div className="space-y-2">
@@ -33,12 +42,11 @@ export const NumberField = ({
 				step="any"
 				value={value}
 				onChange={onChange}
+				onKeyDown={onKeyDown}
+				enterKeyHint={enterKeyHint}
 				placeholder={placeholder}
 				className="w-full rounded-xl border border-palette-border bg-palette-surface px-4 py-3 text-base text-palette-textStrong shadow-sm outline-none transition focus:border-palette-brand focus:ring-2 focus:ring-palette-brand/20"
 			/>
-			{helpText ? (
-				<p className="text-xs text-palette-textMuted">{helpText}</p>
-			) : null}
 		</div>
 	);
 };
