@@ -14,11 +14,29 @@ const INITIAL_VALUES = {
 	inventory: '3',
 };
 
+const SwapIcon = () => (
+	<svg
+		aria-hidden="true"
+		viewBox="0 0 24 24"
+		className="h-5 w-5"
+		fill="none"
+		stroke="currentColor"
+		strokeWidth="1.75"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+	>
+		<path d="M7 7h11" />
+		<path d="m14 4 4 3-4 3" />
+		<path d="M17 17H6" />
+		<path d="m10 14-4 3 4 3" />
+	</svg>
+);
+
 export const TradeCalculator = () => {
 	const [wantRatio, setWantRatio] = useState(INITIAL_VALUES.wantRatio);
 	const [haveRatio, setHaveRatio] = useState(INITIAL_VALUES.haveRatio);
 	const [inventory, setInventory] = useState(INITIAL_VALUES.inventory);
-	const [shouldAutoCopy, setShouldAutoCopy] = useState(true);
+	const [shouldAutoCopy, setShouldAutoCopy] = useState(false);
 	const [copyStatus, setCopyStatus] = useState('');
 
 	const result = useMemo(
@@ -26,7 +44,10 @@ export const TradeCalculator = () => {
 		[wantRatio, haveRatio, inventory],
 	);
 
-	const copyReceiveAmount = async () => {
+	const copyToClipboard = async (
+		value: string,
+		label: 'I want' | 'I have',
+	) => {
 		if (!result.canTrade) {
 			setCopyStatus('Enter a valid trade before copying.');
 			return;
@@ -38,13 +59,15 @@ export const TradeCalculator = () => {
 		}
 
 		try {
-			await navigator.clipboard.writeText(
-				result.receiveAmount.toString(),
-			);
-			setCopyStatus(`Copied I want: ${result.receiveAmount.toString()}`);
+			await navigator.clipboard.writeText(value);
+			setCopyStatus(`Copied ${label}: ${value}`);
 		} catch {
 			setCopyStatus('Clipboard permission was blocked.');
 		}
+	};
+
+	const copyReceiveAmount = async () => {
+		await copyToClipboard(result.receiveAmount.toString(), 'I want');
 	};
 
 	useEffect(() => {
@@ -122,9 +145,9 @@ export const TradeCalculator = () => {
 					type="button"
 					onClick={handleSwapRatios}
 					aria-label="Swap I want and I have ratios"
-					className="mb-[0.125rem] inline-flex h-12 items-center justify-center rounded-xl border border-palette-border bg-palette-surface px-3 text-sm font-medium text-palette-textStrong shadow-sm transition hover:border-palette-brand hover:text-palette-brand focus:outline-none focus:ring-2 focus:ring-palette-brand/20"
+					className="mb-[0.125rem] inline-flex h-12 w-12 items-center justify-center rounded-xl border border-palette-border bg-palette-surface text-palette-textStrong shadow-sm transition hover:border-palette-brand hover:text-palette-brand focus:outline-none focus:ring-2 focus:ring-palette-brand/20"
 				>
-					Swap
+					<SwapIcon />
 				</button>
 				<NumberField
 					id="haveRatio"
@@ -169,18 +192,42 @@ export const TradeCalculator = () => {
 
 			<div className="rounded-xl border border-palette-border bg-palette-surface p-4">
 				<div className="grid grid-cols-2 gap-3 text-center">
-					<div className="rounded-lg bg-palette-bg p-3">
+					<button
+						type="button"
+						onClick={() =>
+							void copyToClipboard(
+								result.receiveAmount.toString(),
+								'I want',
+							)
+						}
+						className="rounded-lg bg-palette-bg p-3 transition hover:border-palette-brand hover:bg-palette-surface focus:outline-none focus:ring-2 focus:ring-palette-brand/20"
+					>
 						<p className="text-xs text-palette-textMuted">I want</p>
 						<p className="text-2xl font-semibold text-palette-textStrong">
 							{result.receiveAmount.toString()}
 						</p>
-					</div>
-					<div className="rounded-lg bg-palette-bg p-3">
+						<p className="mt-2 text-xs text-palette-textMuted">
+							Click to copy
+						</p>
+					</button>
+					<button
+						type="button"
+						onClick={() =>
+							void copyToClipboard(
+								result.sellAmount.toString(),
+								'I have',
+							)
+						}
+						className="rounded-lg bg-palette-bg p-3 transition hover:border-palette-brand hover:bg-palette-surface focus:outline-none focus:ring-2 focus:ring-palette-brand/20"
+					>
 						<p className="text-xs text-palette-textMuted">I have</p>
 						<p className="text-2xl font-semibold text-palette-textStrong">
 							{result.sellAmount.toString()}
 						</p>
-					</div>
+						<p className="mt-2 text-xs text-palette-textMuted">
+							Click to copy
+						</p>
+					</button>
 				</div>
 
 				<div className="mt-4 space-y-1 text-sm text-palette-textMuted">
